@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AuthFormProps {
   type: 'login' | 'register';
@@ -14,25 +15,57 @@ interface AuthFormProps {
 const AuthForm = ({ type }: AuthFormProps) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  
-  const handleSubmit = (e: React.FormEvent) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      if (type === 'login') {
+
+    try {
+      if (type === 'register') {
+        if (formData.password !== formData.confirmPassword) {
+          toast.error('Passwords do not match');
+          return;
+        }
+
+        const { error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: {
+              first_name: formData.name.split(' ')[0],
+              last_name: formData.name.split(' ').slice(1).join(' '),
+            }
+          }
+        });
+
+        if (error) throw error;
+        
+        toast.success('Account created successfully! Please check your email to verify your account.');
+        navigate('/login');
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (error) throw error;
+        
         toast.success('Logged in successfully');
         navigate('/dashboard');
-      } else {
-        toast.success('Account created successfully');
-        navigate('/dashboard');
       }
-    }, 1000);
+    } catch (error: any) {
+      toast.error(error.message || 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
   };
-  
+
   return (
     <Card className="w-full max-w-md shadow-lg animate-fade-in">
       <CardHeader>
@@ -48,43 +81,67 @@ const AuthForm = ({ type }: AuthFormProps) => {
           {type === 'register' && (
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
-              <Input id="name" placeholder="Enter your name" required />
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="Enter your name"
+                required
+              />
             </div>
           )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="name@example.com" required />
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              placeholder="name@example.com"
+              required
+            />
           </div>
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
-              {type === 'login' && (
-                <Button type="button" variant="link" className="p-0 h-auto text-xs">
-                  Forgot password?
-                </Button>
-              )}
-            </div>
-            <Input id="password" type="password" placeholder="••••••••" required />
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              value={formData.password}
+              onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+              placeholder="••••••••"
+              required
+            />
           </div>
           {type === 'register' && (
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input id="confirmPassword" type="password" placeholder="••••••••" required />
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                placeholder="••••••••"
+                required
+              />
             </div>
           )}
         </CardContent>
         <CardFooter className="flex flex-col">
-          <Button type="submit" className="w-full bg-surveyspark-teal hover:bg-surveyspark-teal/90" disabled={isLoading}>
+          <Button 
+            type="submit" 
+            className="w-full bg-surveyspark-teal hover:bg-surveyspark-teal/90" 
+            disabled={isLoading}
+          >
             {isLoading ? (
               <span className="flex items-center gap-2">
-                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
                 {type === 'login' ? 'Signing in...' : 'Creating account...'}
               </span>
             ) : (
-              <>{type === 'login' ? 'Sign In' : 'Create Account'}</>
+              type === 'login' ? 'Sign In' : 'Create Account'
             )}
           </Button>
           <div className="mt-4 text-center text-sm">
