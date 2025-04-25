@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import Logo from './Logo';
 import { 
   Menu, 
@@ -42,6 +43,9 @@ const NavItem = ({ to, icon, label, collapsed }: NavItemProps) => {
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const { signOut, profile } = useAuth();
+
+  const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin';
 
   return (
     <div className={cn(
@@ -67,7 +71,7 @@ const Sidebar = () => {
             <NavItem to="/surveys" icon={<FileText size={20} />} label="Surveys" collapsed={collapsed} />
             <NavItem to="/reports" icon={<BarChart size={20} />} label="Reports" collapsed={collapsed} />
             <NavItem to="/profile" icon={<User size={20} />} label="Profile" collapsed={collapsed} />
-            <NavItem to="/users" icon={<Users size={20} />} label="Users" collapsed={collapsed} />
+            {isAdmin && <NavItem to="/users" icon={<Users size={20} />} label="Users" collapsed={collapsed} />}
             <NavItem to="/settings" icon={<Settings size={20} />} label="Settings" collapsed={collapsed} />
           </div>
         </div>
@@ -79,6 +83,7 @@ const Sidebar = () => {
               "w-full justify-start text-sidebar-foreground/80 hover:bg-sidebar-accent",
               collapsed ? "px-2" : ""
             )}
+            onClick={signOut}
           >
             <LogOut size={20} />
             {!collapsed && <span className="ml-2">Logout</span>}
