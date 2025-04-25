@@ -9,27 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      organizations: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -37,8 +16,6 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
-          organization_id: string | null
-          role: string | null
           updated_at: string
         }
         Insert: {
@@ -47,8 +24,6 @@ export type Database = {
           first_name?: string | null
           id: string
           last_name?: string | null
-          organization_id?: string | null
-          role?: string | null
           updated_at?: string
         }
         Update: {
@@ -57,19 +32,9 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
-          organization_id?: string | null
-          role?: string | null
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       question_answers: {
         Row: {
@@ -257,7 +222,6 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
-          is_public: boolean | null
           report_type: string
           title: string
           updated_at: string
@@ -267,7 +231,6 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          is_public?: boolean | null
           report_type: string
           title: string
           updated_at?: string
@@ -277,7 +240,6 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
-          is_public?: boolean | null
           report_type?: string
           title?: string
           updated_at?: string
@@ -285,103 +247,12 @@ export type Database = {
         }
         Relationships: []
       }
-      theme_settings: {
-        Row: {
-          created_at: string
-          id: string
-          is_global: boolean | null
-          organization_id: string | null
-          primary_color: string | null
-          secondary_color: string | null
-          survey_theme: string | null
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          is_global?: boolean | null
-          organization_id?: string | null
-          primary_color?: string | null
-          secondary_color?: string | null
-          survey_theme?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          is_global?: boolean | null
-          organization_id?: string | null
-          primary_color?: string | null
-          secondary_color?: string | null
-          survey_theme?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "theme_settings_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_roles: {
-        Row: {
-          can_create_surveys: boolean | null
-          can_download_reports: boolean | null
-          can_manage_users: boolean | null
-          can_view_reports: boolean | null
-          created_at: string
-          id: string
-          organization_id: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          can_create_surveys?: boolean | null
-          can_download_reports?: boolean | null
-          can_manage_users?: boolean | null
-          can_view_reports?: boolean | null
-          created_at?: string
-          id?: string
-          organization_id?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          can_create_surveys?: boolean | null
-          can_download_reports?: boolean | null
-          can_manage_users?: boolean | null
-          can_view_reports?: boolean | null
-          created_at?: string
-          id?: string
-          organization_id?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_roles_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      get_survey_results: {
-        Args: { survey_id: string }
-        Returns: Json
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
