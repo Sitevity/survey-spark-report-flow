@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,17 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Custom colors for SurveySpark
+				surveyspark: {
+					teal: '#68C3C4',
+					darkblue: '#164B77',
+					lightblue: '#E4F5F5',
+					gray: '#F2F2F2',
+					darkgray: '#555555',
+					success: '#4caf50',
+					warning: '#ff9800',
+					danger: '#f44336',
 				}
 			},
 			borderRadius: {
@@ -84,12 +96,44 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'pulse-light': {
+					'0%, 100%': {
+						opacity: '1',
+					},
+					'50%': {
+						opacity: '0.8',
+					}
+				},
+				'slide-in': {
+					'0%': {
+						transform: 'translateX(-100%)'
+					},
+					'100%': {
+						transform: 'translateX(0)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.4s ease-out',
+				'pulse-light': 'pulse-light 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+				'slide-in': 'slide-in 0.3s ease-out'
+			},
+			backgroundImage: {
+				'gradient-survey': 'linear-gradient(180deg, rgba(22, 75, 119, 0.9) 0%, rgba(104, 195, 196, 0.7) 100%)',
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
